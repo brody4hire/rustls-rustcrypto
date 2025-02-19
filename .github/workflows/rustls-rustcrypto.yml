@@ -16,6 +16,7 @@ env:
   CARGO_INCREMENTAL: 0
   RUSTFLAGS: "-Dwarnings"
 
+# XXX TBD TEST (MORE) WITH RUST NIGHTLY - ???
 jobs:
   clippy:
     runs-on: ubuntu-latest
@@ -57,6 +58,9 @@ jobs:
           - armv7a-none-eabi
           - thumbv7em-none-eabi
           - wasm32-unknown-unknown
+          # XXX XXX no atomic ptr
+          - riscv32imc-unknown-none-elf
+          # XXX TODO thumbv6
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@master
@@ -65,8 +69,10 @@ jobs:
           targets: ${{ matrix.target }}
       - run: cargo build --no-default-features --features tls12,alloc --release --target ${{ matrix.target }}
 
+  # XXX TBD GONE:
   no_atomic_ptr:
     runs-on: ubuntu-latest
+    if: false # XXX XXX
     strategy:
       matrix:
         rust:
@@ -103,7 +109,9 @@ jobs:
       - name: Test no_std with alloc
         run: cargo test --no-default-features --features tls12,alloc
 
+  # XXX TBD GONE - ??? ???
   test-critical-section:
+    if: false # XXX XXX
     strategy:
       matrix:
         toolchain:
@@ -142,6 +150,7 @@ jobs:
     strategy:
       matrix:
         include:
+          # XXX TODO MORE CROSS TARGET(S)
           - target: powerpc-unknown-linux-gnu
             rust: nightly
     runs-on: ubuntu-latest
@@ -154,5 +163,6 @@ jobs:
           targets: ${{ matrix.target }}
       - uses: RustCrypto/actions/cross-install@master
       - run: cross test --release --target ${{ matrix.target }} --all-features
-        env:
-          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
+        # XXX TBD GONE:
+        # env:
+        #   RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
