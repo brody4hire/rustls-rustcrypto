@@ -60,7 +60,7 @@ jobs:
           - wasm32-unknown-unknown
           # XXX XXX no atomic ptr
           - riscv32imc-unknown-none-elf
-          # XXX TODO thumbv6
+          - thumbv6m-none-eabi
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@master
