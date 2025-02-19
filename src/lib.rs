@@ -38,8 +38,9 @@ compile_error!("Rustls currently does not support alloc-less environments");
 #[cfg(feature = "alloc")]
 extern crate alloc;
 
-#[cfg(feature = "alloc")]
-use alloc::sync::Arc;
+// XXX TBD XXX XXX
+// use rustls::util::alias::Arc;
+use alloc::rc::Rc as Arc;
 
 use rustls::crypto::{
     CipherSuiteCommon, CryptoProvider, GetRandomFailed, KeyProvider, SecureRandom,

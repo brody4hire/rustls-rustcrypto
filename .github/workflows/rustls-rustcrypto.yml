@@ -16,6 +16,7 @@ env:
   CARGO_INCREMENTAL: 0
   RUSTFLAGS: "-Dwarnings"
 
+# XXX TBD TEST (MORE) WITH RUST NIGHTLY - ???
 jobs:
   clippy:
     runs-on: ubuntu-latest
@@ -25,7 +26,7 @@ jobs:
         with:
           toolchain: 1.75.0
           components: clippy
-      - run: cargo clippy --all --all-features -- -D warnings
+      - run: cargo clippy --all -- -D warnings
 
   doc:
     runs-on: ubuntu-latest
@@ -34,7 +35,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: stable
-      - run: cargo doc --all-features --no-deps
+      - run: cargo doc --no-deps
 
   rustfmt:
     runs-on: ubuntu-latest
@@ -57,13 +58,51 @@ jobs:
           - armv7a-none-eabi
           - thumbv7em-none-eabi
           - wasm32-unknown-unknown
+          # XXX XXX no atomic ptr
+          - riscv32imc-unknown-none-elf
+          - thumbv6m-none-eabi
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.rust }}
           targets: ${{ matrix.target }}
+      # XXX XXX QUICK BUILD WORKAROUND FOR no atomic ptr - riscv32 target only for now
+      - run: |
+          cargo add once_cell --no-default-features -F critical-section
+          cargo add portable-atomic --no-default-features -F critical-section
+          cargo add spin --no-default-features -F portable_atomic
+        if: ${{ matrix.target == 'riscv32imc-unknown-none-elf' }}
+      # XXX XXX MODIFIED BUILD WORKAROUND FOR no atomic ptr - thumbv6 target only for now
+      - run: |
+          cargo add once_cell --no-default-features -F critical-section
+          cargo add portable-atomic --no-default-features -F unsafe-assume-single-core
+          cargo add spin --no-default-features -F portable_atomic
+        if: ${{ matrix.target == 'thumbv6m-none-eabi' }}
       - run: cargo build --no-default-features --features tls12,alloc --release --target ${{ matrix.target }}
+
+  # XXX TBD GONE:
+  no_atomic_ptr:
+    runs-on: ubuntu-latest
+    if: false # XXX XXX
+    strategy:
+      matrix:
+        rust:
+          - nightly
+        target:
+          - riscv32imc-unknown-none-elf
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.rust }}
+          targets: ${{ matrix.target }}
+      # QUICK CARGO WORKAROUNDS to get build working without atomic ptr
+      - run: cargo update
+      - run: cargo add spin -F portable_atomic
+      - run: cargo build --no-default-features --features alloc,critical-section --release --target ${{ matrix.target }}
+        env:
+          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
 
   test:
     strategy:
@@ -82,6 +121,24 @@ jobs:
       - name: Test no_std with alloc
         run: cargo test --no-default-features --features tls12,alloc
 
+  # XXX TBD GONE - ??? ???
+  test-critical-section:
+    if: false # XXX XXX
+    strategy:
+      matrix:
+        toolchain:
+          - nightly
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: RustCrypto/actions/cargo-cache@master
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.toolchain }}
+      - run: cargo test --features critical-section
+        env:
+          RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized
+
   cross:
     strategy:
       matrix:
@@ -99,4 +156,25 @@ jobs:
           toolchain: ${{ matrix.rust }}
           targets: ${{ matrix.target }}
       - uses: RustCrypto/actions/cross-install@master
+      - run: cross test --release --target ${{ matrix.target }} --features logging
+
+  cross-unstable:
+    strategy:
+      matrix:
+        include:
+          # XXX TODO MORE CROSS TARGET(S)
+          - target: powerpc-unknown-linux-gnu
+            rust: nightly
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: ${{ matrix.deps }}
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.rust }}
+          targets: ${{ matrix.target }}
+      - uses: RustCrypto/actions/cross-install@master
       - run: cross test --release --target ${{ matrix.target }} --all-features
+        # XXX TBD GONE:
+        # env:
+        #   RUSTFLAGS: --cfg portable_atomic_unstable_coerce_unsized

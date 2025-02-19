@@ -1,4 +1,6 @@
-use std::sync::Arc;
+// XXX TBD XXX XXX
+// use rustls::util::alias::Arc;
+use std::rc::Rc as Arc;
 
 use rustls::server::ClientHello;
 
