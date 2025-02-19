@@ -3,7 +3,7 @@ use std::io::{Read, Write};
 use std::net::SocketAddr;
 use std::net::TcpStream;
 use std::path::PathBuf;
-use std::sync::Arc;
+use std::rc::Rc as Arc;
 
 use rustls_rustcrypto::provider as rustcrypto_provider;
 
