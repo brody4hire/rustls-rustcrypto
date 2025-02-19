@@ -67,6 +67,11 @@ jobs:
         with:
           toolchain: ${{ matrix.rust }}
           targets: ${{ matrix.target }}
+      # XXX XXXX QUICK BUILD WORKAROUND FOR no atomic ptr
+      - run: |
+          cargo add once_cell --no-default-features -F critical-section
+          cargo add portable-atomic --no-default-features -F critical-section
+          cargo add spin --no-default-features -F portable_atomic
       - run: cargo build --no-default-features --features tls12,alloc --release --target ${{ matrix.target }}
 
   # XXX TBD GONE:
