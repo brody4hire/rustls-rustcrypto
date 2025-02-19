@@ -523,9 +523,9 @@ dependencies = [
 
 [[package]]
 name = "p384"
-version = "0.13.0"
+version = "0.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "70786f51bcc69f6a4c0360e063a4cac5419ef7c5cd5b3c99ad70f3be5ba79209"
+checksum = "fe42f1670a52a47d448f14b6a5c61dd78fce51856e68edaa38f7ae3a46b8d6b6"
 dependencies = [
  "ecdsa",
  "elliptic-curve",
@@ -732,9 +732,9 @@ dependencies = [
 
 [[package]]
 name = "rsa"
-version = "0.9.6"
+version = "0.9.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5d0e5124fcb30e76a7e79bfee683a2746db83784b86289f6251b54b7950a0dfc"
+checksum = "47c75d7c5c6b673e58bf54d8544a9f432e3a925b0e80f7cd3602ab5c50c55519"
 dependencies = [
  "const-oid",
  "digest",
@@ -762,9 +762,9 @@ dependencies = [
 
 [[package]]
 name = "rustls-pki-types"
-version = "1.10.0"
+version = "1.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "16f1201b3c9a7ee8039bcadc17b7e605e2945b27eee7631788c1bd2b0643674b"
+checksum = "917ce264624a4b4db1c364dcc35bfca9ded014d0a958cd47ad3e960e988ea51c"
 
 [[package]]
 name = "rustls-rustcrypto"
