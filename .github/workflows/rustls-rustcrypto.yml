@@ -67,18 +67,18 @@ jobs:
         with:
           toolchain: ${{ matrix.rust }}
           targets: ${{ matrix.target }}
-      # XXX XXX QUICK BUILD WORKAROUND FOR no atomic ptr
+      # XXX XXX QUICK BUILD WORKAROUND FOR no atomic ptr - riscv32 target only for now
       - run: |
           cargo add once_cell --no-default-features -F critical-section
           cargo add portable-atomic --no-default-features -F critical-section
           cargo add spin --no-default-features -F portable_atomic
         if: ${{ matrix.target == 'riscv32imc-unknown-none-elf' }}
-      # XXX XXX MODIFIED BUILD WORKAROUND FOR no atomic ptr
+      # XXX XXX MODIFIED BUILD WORKAROUND FOR no atomic ptr - thumbv6 target only for now
       - run: |
           cargo add once_cell --no-default-features -F critical-section
           cargo add portable-atomic --no-default-features -F unsafe-assume-single-core
           cargo add spin --no-default-features -F portable_atomic
-        if: ${{ matrix.target == 'riscv32imc-unknown-none-elf' }}
+        if: ${{ matrix.target == 'thumbv6m-none-eabi' }}
       - run: cargo build --no-default-features --features tls12,alloc --release --target ${{ matrix.target }}
 
   # XXX TBD GONE:
