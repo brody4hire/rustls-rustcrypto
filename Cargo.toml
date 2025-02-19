@@ -62,4 +62,4 @@ alloc = ["webpki/alloc", "pki-types/alloc", "aead/alloc", "ed25519-dalek/alloc"]
 zeroize = ["ed25519-dalek/zeroize", "x25519-dalek/zeroize"]
 
 # XXX TBD ??? ???
-critical-section = [ "rustls/critical-section"]
+# critical-section = [ "rustls/critical-section"]
